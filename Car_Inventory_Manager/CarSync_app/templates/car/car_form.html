@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block body %}
+
+{% if user.is_authenticated %}
+<form method="post" class="custom-form" id="carForm">
+    {% if success_message %}
+    <div class="alert alert-success text-center" role="alert" style="display: flex; justify-content: center;">
+        {{ success_message }}
+    </div>
+    {% endif %}
+
+    {% csrf_token %}
+    <h2 style="text-align: center;"><b>Add Your Car Information</b></h2>
+    <!-- {{form|crispy}} -->
+    {% for field in form %}
+    <div class="mb-3">
+        {{ field.label_tag }}
+        {{ field }}
+        {{ field.errors }}
+    </div>
+    {% endfor %}
+
+    <div id="fuelInput" style="display: none;">
+        <label for="id_fuel">Fuel Efficiency(MPG) :</label>
+        <input type="text" id="id_fuel" name="fuel_efficiency" class="textinput form-control" required="">
+    </div>
+
+    <div id="batteryInput" style="display: none;">
+        <label for="id_battery">Battery Capacity(kWh) :</label>
+        <input type="text" id="id_battery" name="battery_capacity" class="textinput form-control" required="">
+    </div> <br>
+
+    <button id="submitBtn" class="btn btn-danger" type="button">Submit</button>
+</form>
+
+{% else %}
+<div style="text-align: center;">
+    <div class="alert alert-success text-center" role="alert" style="display: flex; justify-content: center;">
+        <h3>Please log in to add car</h3>
+    </div>
+    <a href="{% url 'login' %}" class="btn btn-warning">Login</a>
+</div>
+{% endif %}
+
+
+<script>
+    function toggleInputFields() {
+        var carType = document.getElementById("id_car_type").value;
+        var fuelInput = document.getElementById("fuelInput");
+        var batteryInput = document.getElementById("batteryInput");
+
+        if (carType === 'Gas') {
+            fuelInput.style.display = "block";
+            batteryInput.style.display = "none";
+        } else if (carType === 'Electric') {
+            fuelInput.style.display = "none";
+            batteryInput.style.display = "block";
+        } else {
+            fuelInput.style.display = "none";
+            batteryInput.style.display = "none";
+        }
+    }
+
+    document.getElementById("id_car_type").addEventListener("change", toggleInputFields);
+    toggleInputFields();
+
+    document.getElementById("submitBtn").addEventListener("click", function () {
+
+        document.getElementById("carForm").submit();
+    });
+</script>
+
+<style>
+    .custom-form {
+        background-color: #f0f0f0;
+        padding: 20px;
+        border-radius: 10px;
+        width: 50%;
+        margin: auto;
+        margin-top: 20px;
+    }
+
+    #fuelInput,
+    #batteryInput {
+        margin-top: 10px;
+    }
+
+    #submitBtn {
+        display: block;
+        margin: auto;
+    }
+</style>
+
+{% endblock body %}
